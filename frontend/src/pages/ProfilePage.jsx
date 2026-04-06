@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import ProfileSidebar from '../components/ProfileSidebar';
 import Footer from '../components/Footer';
-import axios from 'axios';
+import api from '../utils/api';
 
 const ProfilePage = () => {
   const { user, deleteAccount } = useContext(AuthContext);
@@ -19,7 +19,7 @@ const ProfilePage = () => {
     setLastName(user.name.split(' ').slice(1).join(' ') || '');
     const fetchOrders = async () => {
       try {
-        const { data } = await axios.get('/api/orders/myorders', {
+        const { data } = await api.get('/api/orders/myorders', {
           headers: { Authorization: `Bearer ${user.token}` }
         });
         setOrders(data);

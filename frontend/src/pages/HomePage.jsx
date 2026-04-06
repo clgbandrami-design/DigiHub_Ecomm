@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import axios from 'axios';
+import api from '../utils/api';
 import ProductCard from '../components/ProductCard';
 import HeroSlider from '../components/HeroSlider';
 import CategoryBar from '../components/CategoryBar';
@@ -24,7 +24,7 @@ const HomePage = () => {
       const params = new URLSearchParams();
       if (activeCategory !== 'All') params.append('category', activeCategory);
       params.append('sort', sortBy);
-      const { data } = await axios.get(`/api/products?${params}`);
+      const { data } = await api.get(`/api/products?${params}`);
       setProducts(data);
     } catch (error) {
       console.error('Error fetching products', error);

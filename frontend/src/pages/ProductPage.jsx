@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../utils/api';
 import { CartContext } from '../context/CartContext';
 import { AuthContext } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
@@ -48,7 +48,7 @@ const ProductPage = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const { data } = await axios.get(`/api/products/${id}`);
+        const { data } = await api.get(`/api/products/${id}`);
         setProduct(data);
       } catch (error) {
         console.error('Error fetching product', error);
@@ -57,7 +57,7 @@ const ProductPage = () => {
       }
     };
     fetchProduct();
-    axios.get(`/api/reviews/${id}`).then(res => setReviews(res.data)).catch(() => {});
+    api.get(`/api/reviews/${id}`).then(res => setReviews(res.data)).catch(() => {});
   }, [id]);
 
   if (loading) return (
@@ -93,11 +93,11 @@ const ProductPage = () => {
     if (!user) { toast.warning('Please login to write a review'); navigate('/login'); return; }
     setSubmittingReview(true);
     try {
-      await axios.post('/api/reviews', { productId: id, ...reviewForm }, getAuthHeader());
+      await api.post('/api/reviews', { productId: id, ...reviewForm }, getAuthHeader());
       toast.success('Review submitted!');
       setReviewForm({ rating: 5, comment: '' });
       // Refresh
-      const [prodRes, revRes] = await Promise.all([axios.get(`/api/products/${id}`), axios.get(`/api/reviews/${id}`)]);
+      const [prodRes, revRes] = await Promise.all([api.get(`/api/products/${id}`), api.get(`/api/reviews/${id}`)]);
       setProduct(prodRes.data);
       setReviews(revRes.data);
     } catch (err) {
@@ -108,9 +108,9 @@ const ProductPage = () => {
 
   const deleteReview = async (reviewId) => {
     try {
-      await axios.delete(`/api/reviews/${reviewId}`, getAuthHeader());
+      await api.delete(`/api/reviews/${reviewId}`, getAuthHeader());
       toast.success('Review deleted');
-      const [prodRes, revRes] = await Promise.all([axios.get(`/api/products/${id}`), axios.get(`/api/reviews/${id}`)]);
+      const [prodRes, revRes] = await Promise.all([api.get(`/api/products/${id}`), api.get(`/api/reviews/${id}`)]);
       setProduct(prodRes.data);
       setReviews(revRes.data);
     } catch (err) {

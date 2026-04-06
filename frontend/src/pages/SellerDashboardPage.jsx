@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../utils/api';
 import { AuthContext } from '../context/AuthContext';
 import { Package, Plus, Edit2, Trash2, Store, BarChart2, X } from 'lucide-react';
 
@@ -27,7 +27,7 @@ const SellerDashboardPage = () => {
   const fetchProducts = async () => {
     setLoading(true);
     try {
-      const { data } = await axios.get('/api/seller/my-products', getAuthHeader());
+      const { data } = await api.get('/api/seller/my-products', getAuthHeader());
       setProducts(data);
     } catch { setProducts([]); }
     setLoading(false);
@@ -38,10 +38,10 @@ const SellerDashboardPage = () => {
     setLoading(true);
     try {
       if (editingId) {
-        await axios.put(`/api/seller/products/${editingId}`, formData, getAuthHeader());
+        await api.put(`/api/seller/products/${editingId}`, formData, getAuthHeader());
         setMessage('Product updated!');
       } else {
-        await axios.post('/api/seller/products', formData, getAuthHeader());
+        await api.post('/api/seller/products', formData, getAuthHeader());
         setMessage('Product created!');
       }
       setFormData({ name: '', image: '', description: '', price: '', originalPrice: '', category: '', fileUrl: '', badge: '' });
@@ -62,7 +62,7 @@ const SellerDashboardPage = () => {
 
   const handleDelete = async (id) => {
     if (!window.confirm('Delete this product?')) return;
-    await axios.delete(`/api/seller/products/${id}`, getAuthHeader());
+    await api.delete(`/api/seller/products/${id}`, getAuthHeader());
     fetchProducts();
   };
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import axios from 'axios';
+import api from '../utils/api';
 import { AuthContext } from '../context/AuthContext';
 import Footer from '../components/Footer';
 import { Store, CheckCircle, TrendingUp, ShieldCheck, Zap, DollarSign, ArrowRight } from 'lucide-react';
@@ -31,7 +31,7 @@ const BecomeSellerPage = () => {
     setLoading(true);
     setError('');
     try {
-      const { data } = await axios.put('/api/seller/become-seller', { storeName, description }, getAuthHeader());
+      const { data } = await api.put('/api/seller/become-seller', { storeName, description }, getAuthHeader());
       loginFromOAuth({ ...user, ...data, token: user.token });
       navigate('/seller/dashboard');
     } catch (err) {

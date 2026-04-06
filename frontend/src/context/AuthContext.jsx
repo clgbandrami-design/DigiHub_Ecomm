@@ -1,5 +1,5 @@
 import React, { createContext, useState } from 'react';
-import axios from 'axios';
+import api from '../utils/api';
 
 export const AuthContext = createContext();
 
@@ -16,19 +16,19 @@ export const AuthProvider = ({ children }) => {
   };
 
   const login = async (email, password) => {
-    const { data } = await axios.post('/api/users/login', { email, password });
+    const { data } = await api.post('/api/users/login', { email, password });
     saveUser(data);
     return data;
   };
 
   const register = async (name, email, password, confirmPassword) => {
-    const { data } = await axios.post('/api/users', { name, email, password, confirmPassword });
+    const { data } = await api.post('/api/users', { name, email, password, confirmPassword });
     // Don't saveUser here because it requires OTP verification first
     return data;
   };
 
   const loginWithGoogle = () => {
-    window.location.href = 'http://localhost:5000/api/users/auth/google';
+    window.location.href = `${import.meta.env.VITE_API_URL || ''}/api/users/auth/google`;
   };
 
   const loginFromOAuth = (userData) => {
@@ -36,29 +36,29 @@ export const AuthProvider = ({ children }) => {
   };
 
   const sendOTP = async (phone) => {
-    const { data } = await axios.post('/api/users/otp/send', { phone });
+    const { data } = await api.post('/api/users/otp/send', { phone });
     return data;
   };
 
   const verifyOTP = async (phone, otp) => {
-    const { data } = await axios.post('/api/users/otp/verify', { phone, otp });
+    const { data } = await api.post('/api/users/otp/verify', { phone, otp });
     saveUser(data);
     return data;
   };
 
   const verifyEmail = async (email, otp) => {
-    const { data } = await axios.post('/api/users/verify-email', { email, otp });
+    const { data } = await api.post('/api/users/verify-email', { email, otp });
     saveUser(data);
     return data;
   };
 
   const deleteAccount = async () => {
-    await axios.delete('/api/users/profile', getAuthHeader());
+    await api.delete('/api/users/profile', getAuthHeader());
     logout();
   };
 
   const resendOTP = async (email) => {
-    const { data } = await axios.post('/api/users/resend-otp', { email });
+    const { data } = await api.post('/api/users/resend-otp', { email });
     return data;
   };
 

@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../utils/api';
 import { AuthContext } from '../context/AuthContext';
 import ProfileSidebar from '../components/ProfileSidebar';
 import Footer from '../components/Footer';
@@ -23,7 +23,7 @@ const OrdersPage = () => {
     if (!user) { navigate('/login'); return; }
     const fetchOrders = async () => {
       try {
-        const { data } = await axios.get('/api/orders/myorders', getAuthHeader());
+        const { data } = await api.get('/api/orders/myorders', getAuthHeader());
         // Sort newest first
         setOrders(data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
       } catch (err) {

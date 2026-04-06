@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../utils/api';
 import { AuthContext } from '../context/AuthContext';
 import { Users, Package, ShoppingBag, TrendingUp, Trash2, Shield, Store, CheckCircle, XCircle } from 'lucide-react';
 
@@ -28,22 +28,22 @@ const AdminDashboardPage = () => {
   }, [tab]);
 
   const fetchStats = async () => {
-    try { const { data } = await axios.get('/api/admin/stats', getAuthHeader()); setStats(data); } catch {}
+    try { const { data } = await api.get('/api/admin/stats', getAuthHeader()); setStats(data); } catch {}
   };
   const fetchUsers = async () => {
     setLoading(true);
-    try { const { data } = await axios.get('/api/admin/users', getAuthHeader()); setUsers(data); } catch {}
+    try { const { data } = await api.get('/api/admin/users', getAuthHeader()); setUsers(data); } catch {}
     setLoading(false);
   };
   const fetchProducts = async () => {
     setLoading(true);
-    try { const { data } = await axios.get('/api/admin/products', getAuthHeader()); setProducts(data); } catch {}
+    try { const { data } = await api.get('/api/admin/products', getAuthHeader()); setProducts(data); } catch {}
     setLoading(false);
   };
 
   const toggleRole = async (userId, field, currentVal) => {
     try {
-      const { data } = await axios.put(`/api/admin/users/${userId}/role`, { [field]: !currentVal }, getAuthHeader());
+      const { data } = await api.put(`/api/admin/users/${userId}/role`, { [field]: !currentVal }, getAuthHeader());
       setUsers(prev => prev.map(u => u._id === userId ? { ...u, ...data } : u));
       setMessage(`User ${field === 'isAdmin' ? 'admin' : 'seller'} status updated`);
       setTimeout(() => setMessage(''), 2000);
@@ -52,13 +52,13 @@ const AdminDashboardPage = () => {
 
   const deleteUser = async (id) => {
     if (!window.confirm('Delete this user?')) return;
-    await axios.delete(`/api/admin/users/${id}`, getAuthHeader());
+    await api.delete(`/api/admin/users/${id}`, getAuthHeader());
     setUsers(prev => prev.filter(u => u._id !== id));
   };
 
   const deleteProduct = async (id) => {
     if (!window.confirm('Delete this product?')) return;
-    await axios.delete(`/api/admin/products/${id}`, getAuthHeader());
+    await api.delete(`/api/admin/products/${id}`, getAuthHeader());
     setProducts(prev => prev.filter(p => p._id !== id));
   };
 

@@ -8,7 +8,7 @@ import { CartContext } from '../context/CartContext';
 import { AuthContext } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import Footer from '../components/Footer';
-import axios from 'axios';
+import api from '../utils/api';
 
 /* ─── Constants ─────────────────────────────────── */
 const STATES = [
@@ -156,7 +156,7 @@ const CartPage = () => {
       }
 
       // 2. Get Razorpay public key from backend
-      const { data: keyData } = await axios.get('/api/payment/key');
+      const { data: keyData } = await api.get('/api/payment/key');
 
       // 3. Create order on backend
       const orderPayload = {
@@ -170,7 +170,7 @@ const CartPage = () => {
         totalAmount: total,
       };
 
-      const { data: orderData } = await axios.post(
+      const { data: orderData } = await api.post(
         '/api/payment/create-order',
         orderPayload,
         getAuthHeader()
@@ -190,7 +190,7 @@ const CartPage = () => {
         handler: async function (response) {
           try {
             // 5. Verify payment on backend
-            const { data: verifyData } = await axios.post(
+            const { data: verifyData } = await api.post(
               '/api/payment/verify',
               {
                 razorpay_order_id: response.razorpay_order_id,
