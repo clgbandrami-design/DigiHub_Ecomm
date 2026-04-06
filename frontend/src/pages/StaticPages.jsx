@@ -38,7 +38,7 @@ export const ContactPage = () => (
     <p>We'd love to hear from you. Reach out to us through any of the channels below:</p>
     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.25rem', marginTop: '1.5rem' }}>
       {[
-        { icon: '📧', label: 'Email', value: 'support@digihub.com' },
+        { icon: '📧', label: 'Email', value: 'clgbandrami@gmail.com' },
         { icon: '💬', label: 'Live Chat', value: 'Available Mon–Sat, 9AM–6PM IST' },
         { icon: '📍', label: 'Office', value: 'Bangalore, Karnataka, India' },
         { icon: '⏱️', label: 'Response Time', value: 'Within 24 business hours' },
