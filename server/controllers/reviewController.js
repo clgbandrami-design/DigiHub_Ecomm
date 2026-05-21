@@ -1,5 +1,6 @@
 const Review = require('../models/Review');
 const Product = require('../models/Product');
+const Order = require('../models/Order');
 
 // @desc    Create a new review
 // @route   POST /api/reviews
@@ -8,18 +9,40 @@ const createReview = async (req, res) => {
   try {
     const { productId, rating, comment } = req.body;
 
+    if (!productId || !comment?.trim()) {
+      return res.status(400).json({ message: 'Product and comment are required' });
+    }
+
+    const numericRating = Number(rating);
+    if (!Number.isFinite(numericRating) || numericRating < 1 || numericRating > 5) {
+      return res.status(400).json({ message: 'Rating must be between 1 and 5' });
+    }
+
+    const product = await Product.findById(productId);
+    if (!product) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+
     // Check if already reviewed
     const existing = await Review.findOne({ user: req.user._id, product: productId });
     if (existing) {
       return res.status(400).json({ message: 'You have already reviewed this product' });
     }
 
+    const verifiedPurchase = await Order.exists({
+      user: req.user._id,
+      status: 'paid',
+      isPaid: true,
+      'orderItems.product': productId,
+    });
+
     const review = await Review.create({
       user: req.user._id,
       product: productId,
       name: req.user.name,
-      rating: Number(rating),
-      comment,
+      rating: numericRating,
+      comment: comment.trim(),
+      verifiedPurchase: Boolean(verifiedPurchase),
     });
 
     // Update product's average rating and numReviews

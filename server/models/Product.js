@@ -47,6 +47,17 @@ const productSchema = mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
     },
+    // AI Recommendation fields
+    embedding: {
+      type: [Number],
+      default: [],
+      select: false, // Don't include in normal queries (large array)
+    },
+    embeddingText: {
+      type: String,
+      default: '',
+      select: false,
+    },
   },
   {
     timestamps: true,

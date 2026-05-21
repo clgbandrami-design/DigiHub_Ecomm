@@ -4,10 +4,16 @@ const Product = require('../models/Product');
 // @route   GET /api/products
 // @access  Public
 const getProducts = async (req, res) => {
-  const { keyword, category, sort } = req.query;
+  const { keyword, category, sort, limit } = req.query;
 
   const filter = {};
-  if (keyword) filter.name = { $regex: keyword, $options: 'i' };
+  if (keyword) {
+    filter.$or = [
+      { name: { $regex: keyword, $options: 'i' } },
+      { description: { $regex: keyword, $options: 'i' } },
+      { category: { $regex: keyword, $options: 'i' } },
+    ];
+  }
   if (category && category !== 'All') filter.category = category;
 
   const sortMap = {
@@ -18,7 +24,13 @@ const getProducts = async (req, res) => {
   };
   const sortBy = sortMap[sort] || { createdAt: -1 };
 
-  const products = await Product.find(filter).sort(sortBy);
+  const parsedLimit = Number(limit);
+  const query = Product.find(filter).sort(sortBy);
+  if (Number.isFinite(parsedLimit) && parsedLimit > 0) {
+    query.limit(parsedLimit);
+  }
+
+  const products = await query;
   res.json(products);
 };
 
@@ -41,9 +53,18 @@ const getProductById = async (req, res) => {
 const createProduct = async (req, res) => {
   const { name, price, description, image, category, fileUrl } = req.body;
 
+  if (!name || !description || !image || !category || !fileUrl) {
+    return res.status(400).json({ message: 'Please provide all required product fields' });
+  }
+
+  const numericPrice = Number(price);
+  if (!Number.isFinite(numericPrice) || numericPrice <= 0) {
+    return res.status(400).json({ message: 'Price must be greater than 0' });
+  }
+
   const product = new Product({
     name,
-    price,
+    price: numericPrice,
     description,
     image,
     category,

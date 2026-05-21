@@ -1,5 +1,20 @@
 const Order = require('../models/Order');
 
+const buildDownloadItems = (orders) =>
+  orders.flatMap((order) =>
+    (order.orderItems || []).map((item) => ({
+      orderId: order._id,
+      orderStatus: order.status,
+      purchasedAt: order.paidAt || order.createdAt,
+      productId: item.product,
+      name: item.name,
+      image: item.image,
+      fileUrl: item.fileUrl || '',
+      price: item.price,
+      qty: item.qty,
+    }))
+  );
+
 // @desc    Create new order
 // @route   POST /api/orders
 // @access  Private
@@ -14,11 +29,15 @@ const addOrderItems = async (req, res) => {
     res.status(400).json({ message: 'No order items' });
     return;
   } else {
+    if (!Number.isFinite(Number(totalPrice)) || Number(totalPrice) <= 0) {
+      return res.status(400).json({ message: 'Invalid total price' });
+    }
+
     const order = new Order({
       orderItems,
       user: req.user._id,
       paymentMethod,
-      totalPrice,
+      totalPrice: Number(totalPrice),
     });
 
     const createdOrder = await order.save();
@@ -37,6 +56,9 @@ const getOrderById = async (req, res) => {
   );
 
   if (order) {
+    if (order.user._id.toString() !== req.user._id.toString() && !req.user.isAdmin) {
+      return res.status(403).json({ message: 'Not authorized to view this order' });
+    }
     res.json(order);
   } else {
     res.status(404).json({ message: 'Order not found' });
@@ -71,8 +93,21 @@ const updateOrderToPaid = async (req, res) => {
 // @route   GET /api/orders/myorders
 // @access  Private
 const getMyOrders = async (req, res) => {
-  const orders = await Order.find({ user: req.user._id });
+  const orders = await Order.find({ user: req.user._id }).sort({ createdAt: -1 });
   res.json(orders);
+};
+
+// @desc    Get paid digital downloads for logged in user
+// @route   GET /api/orders/downloads
+// @access  Private
+const getMyDownloads = async (req, res) => {
+  const orders = await Order.find({
+    user: req.user._id,
+    status: 'paid',
+    isPaid: true,
+  }).sort({ paidAt: -1, createdAt: -1 });
+
+  res.json(buildDownloadItems(orders).filter((item) => item.fileUrl));
 };
 
 module.exports = {
@@ -80,4 +115,5 @@ module.exports = {
   getOrderById,
   updateOrderToPaid,
   getMyOrders,
+  getMyDownloads,
 };

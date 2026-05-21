@@ -12,7 +12,8 @@ const orderSchema = mongoose.Schema(
         name: { type: String, required: true },
         qty: { type: Number, required: true },
         image: { type: String, required: true },
-        price: { type: Number, required: true },       // price in INR
+        price: { type: Number, required: true },
+        fileUrl: { type: String, default: '' },
         product: {
           type: mongoose.Schema.Types.ObjectId,
           required: true,
@@ -48,6 +49,10 @@ const orderSchema = mongoose.Schema(
       default: 'pending',
     },
     isPaid: {
+      type: Boolean,
+      default: false,
+    },
+    downloadReady: {
       type: Boolean,
       default: false,
     },

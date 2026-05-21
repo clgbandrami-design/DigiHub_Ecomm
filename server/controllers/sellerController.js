@@ -1,5 +1,6 @@
 const Product = require('../models/Product');
 const User = require('../models/User');
+const Order = require('../models/Order');
 
 // @desc    Get seller's own products
 // @route   GET /api/seller/my-products
@@ -19,12 +20,22 @@ const createProduct = async (req, res) => {
 
   const { name, image, description, price, originalPrice, category, fileUrl, badge } = req.body;
 
+  if (!name || !image || !description || !category || !fileUrl) {
+    return res.status(400).json({ message: 'Please provide all required product fields' });
+  }
+
+  const numericPrice = Number(price);
+  const numericOriginalPrice = originalPrice ? Number(originalPrice) : numericPrice;
+  if (!Number.isFinite(numericPrice) || numericPrice <= 0) {
+    return res.status(400).json({ message: 'Price must be greater than 0' });
+  }
+
   const product = await Product.create({
     name,
     image,
     description,
-    price,
-    originalPrice: originalPrice || price,
+    price: numericPrice,
+    originalPrice: Number.isFinite(numericOriginalPrice) ? numericOriginalPrice : numericPrice,
     category,
     fileUrl,
     badge: badge || '',
@@ -49,11 +60,15 @@ const updateProduct = async (req, res) => {
   product.name = name || product.name;
   product.image = image || product.image;
   product.description = description || product.description;
-  product.price = price ?? product.price;
-  product.originalPrice = originalPrice ?? product.originalPrice;
+  product.price = price !== undefined ? Number(price) : product.price;
+  product.originalPrice = originalPrice !== undefined ? Number(originalPrice) : product.originalPrice;
   product.category = category || product.category;
   product.fileUrl = fileUrl || product.fileUrl;
   product.badge = badge ?? product.badge;
+
+  if (!Number.isFinite(product.price) || product.price <= 0) {
+    return res.status(400).json({ message: 'Price must be greater than 0' });
+  }
 
   const updated = await product.save();
   res.json(updated);
@@ -102,4 +117,72 @@ const becomeSeller = async (req, res) => {
   });
 };
 
-module.exports = { getMyProducts, createProduct, updateProduct, deleteProduct, becomeSeller };
+// @desc    Get seller analytics
+// @route   GET /api/seller/analytics
+// @access  Private (seller)
+const getSellerAnalytics = async (req, res) => {
+  if (!req.user.isSeller && !req.user.isAdmin) {
+    return res.status(403).json({ message: 'Not authorized as a seller' });
+  }
+
+  const products = await Product.find({ seller: req.user._id }).select('_id name image price');
+  const productIds = products.map((product) => product._id);
+  const orders = productIds.length
+    ? await Order.find({
+        status: 'paid',
+        isPaid: true,
+        'orderItems.product': { $in: productIds },
+      }).sort({ paidAt: -1, createdAt: -1 })
+    : [];
+
+  const statsByProduct = new Map();
+  products.forEach((product) => {
+    statsByProduct.set(product._id.toString(), {
+      productId: product._id,
+      name: product.name,
+      image: product.image,
+      revenue: 0,
+      unitsSold: 0,
+    });
+  });
+
+  let totalRevenue = 0;
+  let totalOrders = 0;
+  const recentSales = [];
+
+  orders.forEach((order) => {
+    let counted = false;
+    order.orderItems.forEach((item) => {
+      const key = item.product?.toString();
+      if (!key || !statsByProduct.has(key)) return;
+      const entry = statsByProduct.get(key);
+      entry.revenue += Number(item.price) || 0;
+      entry.unitsSold += Number(item.qty) || 0;
+      totalRevenue += Number(item.price) || 0;
+      counted = true;
+      recentSales.push({
+        orderId: order._id,
+        purchasedAt: order.paidAt || order.createdAt,
+        productName: item.name,
+        image: item.image,
+        qty: item.qty,
+        amount: item.price,
+      });
+    });
+    if (counted) totalOrders += 1;
+  });
+
+  const topProducts = Array.from(statsByProduct.values())
+    .sort((a, b) => b.revenue - a.revenue)
+    .slice(0, 5);
+
+  res.json({
+    totalProducts: products.length,
+    totalOrders,
+    totalRevenue,
+    topProducts,
+    recentSales: recentSales.slice(0, 5),
+  });
+};
+
+module.exports = { getMyProducts, createProduct, updateProduct, deleteProduct, becomeSeller, getSellerAnalytics };

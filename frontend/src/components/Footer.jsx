@@ -84,7 +84,7 @@ const Footer = () => {
 
         {/* Bottom bar */}
         <div style={{ padding: '1rem 0', fontSize: 'var(--fs-xs)', color: 'rgba(255,255,255,0.35)', textAlign: 'center' }}>
-          © {new Date().getFullYear()} DigiHub — All rights reserved. Powered with ❤️
+          © {new Date().getFullYear()} DigiHub — All rights reserved.
         </div>
       </div>
 

@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Package, User, MapPin, CreditCard, Heart, Power } from 'lucide-react';
+import { Download, Package, User, MapPin, CreditCard, Heart, Power } from 'lucide-react';
 import { AuthContext } from '../context/AuthContext';
 
 const ProfileSidebar = () => {
@@ -86,6 +86,7 @@ const ProfileSidebar = () => {
             <Heart size={16} /> MY STUFF
           </div>
           <div style={{ paddingLeft: '26px', display: 'flex', flexDirection: 'column' }}>
+            <Link to="/profile/downloads" style={linkStyle('/profile/downloads')}><Download size={14} style={{ marginRight: 6, verticalAlign: 'text-bottom' }} />My Downloads</Link>
             <Link to="/profile/wishlist" style={linkStyle('/profile/wishlist')}>My Wishlist</Link>
           </div>
         </div>

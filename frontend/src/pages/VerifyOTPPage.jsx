@@ -27,7 +27,7 @@ const VerifyOTPPage = () => {
   }, [timer]);
 
   useEffect(() => {
-    if (user && user.isVerified) {
+    if (user) {
       navigate('/');
     }
     if (!email) {
@@ -42,7 +42,7 @@ const VerifyOTPPage = () => {
       setTimer(60);
       setCanResend(false);
       setError('');
-      alert('OTP Resent Successfully!');
+      alert('OTP resent successfully.');
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to resend OTP');
     }

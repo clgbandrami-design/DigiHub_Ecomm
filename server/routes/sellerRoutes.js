@@ -7,12 +7,14 @@ const {
   updateProduct,
   deleteProduct,
   becomeSeller,
+  getSellerAnalytics,
 } = require('../controllers/sellerController');
 
 // All routes are protected
 router.use(protect);
 
 router.put('/become-seller', becomeSeller);
+router.get('/analytics', getSellerAnalytics);
 router.get('/my-products', getMyProducts);
 router.post('/products', createProduct);
 router.put('/products/:id', updateProduct);
