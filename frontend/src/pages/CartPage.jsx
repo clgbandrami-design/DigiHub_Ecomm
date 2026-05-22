@@ -191,10 +191,10 @@ const CartPage = () => {
         key: keyData.key,
         amount: orderData.amount,
         currency: orderData.currency,
-        name: 'DigiHub',
-        description: `Order #${orderData.orderId.slice(-8).toUpperCase()}`,
+        name: 'DigiHub Marketplace',
+        description: `Secure Digital Asset Download • Order #${orderData.orderId.slice(-8).toUpperCase()}`,
         order_id: orderData.razorpay_order_id,
-        image: '', // leave blank; uses default
+        image: 'https://cdn-icons-png.flaticon.com/512/3176/3176366.png', // Adds a premium logo to the popup
 
         // ── Success handler ──
         handler: async function (response) {
@@ -242,12 +242,12 @@ const CartPage = () => {
         prefill: {
           name: user?.name || '',
           email: user?.email || '',
-          contact: user?.phone || '',
+          contact: user?.phone || '9999999999', // Added fallback so the user isn't prompted to type it manually
         },
 
         // ── Theme ──
         theme: {
-          color: '#072654',
+          color: '#fb641b', // Switched to DigiHub's vibrant orange primary color for the payment button
         },
 
         notes: {
