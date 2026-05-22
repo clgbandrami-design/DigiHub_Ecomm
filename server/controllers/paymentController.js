@@ -104,7 +104,8 @@ const createOrder = async (req, res) => {
     });
   } catch (error) {
     console.error('Create Order Error:', error);
-    res.status(500).json({ message: 'Failed to create order', error: error.message });
+    const errorMessage = error.error?.description || error.message || JSON.stringify(error);
+    res.status(500).json({ message: `Failed to create order: ${errorMessage}` });
   }
 };
 
