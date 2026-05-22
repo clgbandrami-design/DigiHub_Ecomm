@@ -90,10 +90,10 @@ const Header = () => {
 
     setSugLoading(true);
     try {
-      const { data } = await api.get('/api/products', {
-        params: { keyword: query.trim(), limit: 6 },
+      const { data } = await api.get('/api/products/ai/search-recommendations', {
+        params: { q: query.trim(), limit: 6 },
       });
-      setSuggestions(Array.isArray(data) ? data.slice(0, 6) : []);
+      setSuggestions(Array.isArray(data.recommendations) ? data.recommendations : []);
       setShowSuggestions(true);
     } catch (error) {
       console.error('Search suggestions failed:', error);
