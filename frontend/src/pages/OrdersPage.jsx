@@ -5,6 +5,7 @@ import {
   Clock,
   CreditCard,
   Download,
+  FileText,
   Package,
   ShoppingBag,
   XCircle,
@@ -51,6 +52,27 @@ const OrdersPage = () => {
 
     fetchOrders();
   }, [getAuthHeader, navigate, user]);
+
+  const handleDownloadInvoice = async (orderId) => {
+    try {
+      const response = await api.get(`/api/orders/${orderId}/invoice`, {
+        ...getAuthHeader(),
+        responseType: 'blob',
+      });
+      
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `DigiHub_Invoice_${orderId.slice(-8).toUpperCase()}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Invoice download failed:', error);
+      alert('Failed to download invoice. Please try again.');
+    }
+  };
 
   if (!user) return null;
 
@@ -168,10 +190,16 @@ const OrdersPage = () => {
                       </div>
 
                       {order.razorpay_payment_id && (
-                        <div style={{ padding: '0.5rem 1.25rem 0.75rem', borderTop: '1px solid #f0f0f0' }}>
+                        <div style={{ padding: '0.75rem 1.25rem', borderTop: '1px solid #f0f0f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem' }}>
                           <p style={{ fontSize: '0.72rem', color: '#999' }}>
                             Payment ID: <span style={{ fontFamily: 'monospace', color: '#666' }}>{order.razorpay_payment_id}</span>
                           </p>
+                          <button
+                            onClick={() => handleDownloadInvoice(order._id)}
+                            style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.75rem', color: '#fff', background: '#333', fontWeight: 600, border: 'none', cursor: 'pointer', padding: '0.4rem 0.85rem', borderRadius: 4, transition: 'background 0.2s' }}
+                          >
+                            <FileText size={13} /> Download Invoice
+                          </button>
                         </div>
                       )}
                     </div>

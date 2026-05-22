@@ -2,7 +2,7 @@ import React, { useContext, useState, useCallback, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   Trash2, MapPin, Plus, Home, Briefcase, CheckCircle,
-  Lock, ShieldCheck, AlertCircle,
+  Lock, ShieldCheck, AlertCircle, FileText
 } from 'lucide-react';
 import { CartContext } from '../context/CartContext';
 import { AuthContext } from '../context/AuthContext';
@@ -374,7 +374,29 @@ const CartPage = () => {
               A confirmation has been sent to <strong>{user?.email}</strong>.
             </p>
             <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-              <button className="btn-primary" style={{ padding: '0.7rem 2rem' }} onClick={() => navigate('/')}>Continue Shopping</button>
+              <button 
+                className="btn-primary" 
+                style={{ padding: '0.7rem 2rem', display: 'flex', alignItems: 'center', gap: 6 }} 
+                onClick={async () => {
+                  try {
+                    const response = await api.get(`/api/orders/${paidOrderId}/invoice`, {
+                      ...getAuthHeader(),
+                      responseType: 'blob',
+                    });
+                    const url = window.URL.createObjectURL(new Blob([response.data]));
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.setAttribute('download', `DigiHub_Invoice_${paidOrderId.slice(-8).toUpperCase()}.pdf`);
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                  } catch (err) {
+                    toast.error('Failed to download invoice');
+                  }
+                }}
+              >
+                <FileText size={16} /> Download Invoice
+              </button>
               <button style={{ padding: '0.7rem 2rem', border: '1px solid var(--primary)', borderRadius: 3, background: 'none', color: 'var(--primary)', fontWeight: 600, cursor: 'pointer' }} onClick={() => navigate('/orders')}>
                 My Orders
               </button>
