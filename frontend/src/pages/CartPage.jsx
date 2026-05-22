@@ -12,9 +12,12 @@ import api from '../utils/api';
 
 /* ─── Constants ─────────────────────────────────── */
 const STATES = [
-  'Andhra Pradesh','Assam','Bihar','Delhi','Gujarat','Haryana','Karnataka',
-  'Kerala','Maharashtra','Punjab','Rajasthan','Tamil Nadu','Telangana',
-  'Uttar Pradesh','West Bengal',
+  'Andaman and Nicobar Islands', 'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 
+  'Chandigarh', 'Chhattisgarh', 'Dadra and Nagar Haveli', 'Daman and Diu', 'Delhi', 'Goa', 
+  'Gujarat', 'Haryana', 'Himachal Pradesh', 'Jammu and Kashmir', 'Jharkhand', 'Karnataka', 
+  'Kerala', 'Ladakh', 'Lakshadweep', 'Madhya Pradesh', 'Maharashtra', 'Manipur', 'Meghalaya', 
+  'Mizoram', 'Nagaland', 'Odisha', 'Puducherry', 'Punjab', 'Rajasthan', 'Sikkim', 'Tamil Nadu', 
+  'Telangana', 'Tripura', 'Uttar Pradesh', 'Uttarakhand', 'West Bengal'
 ];
 
 const emptyForm = { type: 'Home', name: '', mobile: '', pincode: '', address: '', city: '', state: '' };
@@ -101,17 +104,24 @@ const CartPage = () => {
   const platformFee = cartItems.length > 0 ? 25 : 0;
   const total = subtotal + platformFee;
 
-  /* ─── Pincode fetch ──── */
+  // Helper to convert ALL CAPS state name from DB to Title Case to match dropdown
+  const toTitleCase = (str) => {
+    return str.replace(
+      /\w\S*/g,
+      function(txt) {
+        return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+      }
+    );
+  };
+
   const fetchPincode = async (pin) => {
     if (pin.length !== 6) return;
     setPincodeLoading(true);
     setPincodeError('');
     try {
-      const res = await fetch(`https://api.postalpincode.in/pincode/${pin}`);
-      const data = await res.json();
-      if (data[0].Status === 'Success' && data[0].PostOffice?.length > 0) {
-        const po = data[0].PostOffice[0];
-        setForm(f => ({ ...f, city: po.District, state: po.State }));
+      const { data } = await api.get(`/api/pincode/${pin}`);
+      if (data && data.city && data.state) {
+        setForm(f => ({ ...f, city: data.city, state: toTitleCase(data.state) }));
       } else {
         setPincodeError('Invalid pincode.');
       }

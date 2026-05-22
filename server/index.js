@@ -51,6 +51,7 @@ app.use('/api/seller', require('./routes/sellerRoutes'));
 app.use('/api/admin', require('./routes/adminRoutes'));
 app.use('/api/reviews', require('./routes/reviewRoutes'));
 app.use('/api/payment', require('./routes/paymentRoutes'));
+app.use('/api/pincode', require('./routes/pincodeRoutes'));
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`));
