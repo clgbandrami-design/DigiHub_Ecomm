@@ -291,7 +291,7 @@ const ProductPage = () => {
               {product.category || 'Digital Asset'}
             </p>
 
-            <h1 style={{ fontSize: '1.4rem', fontWeight: 600, marginBottom: '0.6rem', color: '#212121', lineHeight: 1.3 }}>
+            <h1 style={{ fontSize: '1.4rem', fontWeight: 600, marginBottom: '0.6rem', color: 'var(--text-heading)', lineHeight: 1.3 }}>
               {product.name}
             </h1>
 
@@ -311,13 +311,13 @@ const ProductPage = () => {
             </div>
 
             <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.75rem', marginBottom: '1.25rem', flexWrap: 'wrap' }}>
-              <span style={{ fontSize: '1.75rem', fontWeight: 700, color: '#212121' }}>{formatInr(priceInr)}</span>
-              <span style={{ color: '#878787', textDecoration: 'line-through', fontSize: '1rem' }}>{formatInr(originalInr)}</span>
+              <span style={{ fontSize: '1.75rem', fontWeight: 700, color: 'var(--text-heading)' }}>{formatInr(priceInr)}</span>
+              <span style={{ color: 'var(--text-muted)', textDecoration: 'line-through', fontSize: '1rem' }}>{formatInr(originalInr)}</span>
               {discount > 0 && <span style={{ color: '#388e3c', fontWeight: 700, fontSize: '0.95rem' }}>{discount}% off</span>}
             </div>
 
-            <div style={{ borderTop: '1px solid #f0f0f0', paddingTop: '1.25rem', marginBottom: '1.25rem' }}>
-              <h3 style={{ fontSize: '0.85rem', fontWeight: 700, marginBottom: '0.75rem', color: '#212121' }}>Highlights</h3>
+            <div style={{ borderTop: '1px solid var(--border)', paddingTop: '1.25rem', marginBottom: '1.25rem' }}>
+              <h3 style={{ fontSize: '0.85rem', fontWeight: 700, marginBottom: '0.75rem', color: 'var(--text-heading)' }}>Highlights</h3>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
                 {[
                   { icon: <Download size={14} />, text: 'Instant Digital Download' },
@@ -325,16 +325,16 @@ const ProductPage = () => {
                   { icon: 'Updates', text: 'Free Lifetime Updates' },
                   { icon: 'Support', text: 'Priority Email Support' },
                 ].map((item, index) => (
-                  <div key={index} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.8rem', color: '#444', padding: '0.35rem 0' }}>
+                  <div key={index} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.8rem', color: 'var(--text-body)', padding: '0.35rem 0' }}>
                     <span style={{ color: 'var(--primary)', flexShrink: 0 }}>{item.icon}</span> {item.text}
                   </div>
                 ))}
               </div>
             </div>
 
-            <div style={{ borderTop: '1px solid #f0f0f0', paddingTop: '1.25rem' }}>
-              <h3 style={{ fontSize: '0.85rem', fontWeight: 700, marginBottom: '0.75rem', color: '#212121' }}>Product Description</h3>
-              <p style={{ fontSize: '0.9rem', lineHeight: 1.7, color: '#444' }}>{product.description}</p>
+            <div style={{ borderTop: '1px solid var(--border)', paddingTop: '1.25rem' }}>
+              <h3 style={{ fontSize: '0.85rem', fontWeight: 700, marginBottom: '0.75rem', color: 'var(--text-heading)' }}>Product Description</h3>
+              <p style={{ fontSize: '0.9rem', lineHeight: 1.7, color: 'var(--text-body)' }}>{product.description}</p>
             </div>
           </div>
         </div>
