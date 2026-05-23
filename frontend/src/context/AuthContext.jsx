@@ -23,7 +23,10 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (name, email, password, confirmPassword) => {
     const { data } = await api.post('/api/users', { name, email, password, confirmPassword });
-    // Don't saveUser here because it requires OTP verification first
+    // If auto-verified (e.g. email delivery failed/disabled), it returns the user object directly
+    if (data.token) {
+      saveUser(data);
+    }
     return data;
   };
 

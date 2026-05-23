@@ -67,7 +67,14 @@ const registerUser = async (req, res) => {
     userExists.emailOtp = otp;
     userExists.emailOtpExpires = Date.now() + 10 * 60 * 1000;
     await userExists.save();
-    await sendEmailOTP(email, otp);
+    const emailSent = await sendEmailOTP(email, otp);
+    if (!emailSent) {
+      userExists.isVerified = true;
+      userExists.emailOtp = undefined;
+      userExists.emailOtpExpires = undefined;
+      await userExists.save();
+      return res.status(201).json(formatUser(userExists, generateToken(userExists._id)));
+    }
     res.status(201).json({ message: 'OTP sent to email', email, pendingVerification: true });
     return;
   }
@@ -91,7 +98,14 @@ const registerUser = async (req, res) => {
   });
 
   if (user) {
-    await sendEmailOTP(email, otp);
+    const emailSent = await sendEmailOTP(email, otp);
+    if (!emailSent) {
+      user.isVerified = true;
+      user.emailOtp = undefined;
+      user.emailOtpExpires = undefined;
+      await user.save();
+      return res.status(201).json(formatUser(user, generateToken(user._id)));
+    }
     res.status(201).json({ message: 'Registration successful. OTP sent to email', email, pendingVerification: true });
   } else {
     res.status(400).json({ message: 'Invalid user data' });
