@@ -548,6 +548,54 @@ const Header = () => {
           </div>
 
           <div className={`nav-actions ${mobileMenuOpen ? 'nav-actions--open' : ''}`}>
+            <Link to="/store" className="nav-item" style={{ fontWeight: 600 }}>
+              <Store size={18} />
+              <span>Store</span>
+            </Link>
+
+            <Link to="/cart" className="nav-item">
+              <div style={{ position: 'relative' }}>
+                <ShoppingCart size={18} />
+                {cartCount > 0 && (
+                  <span
+                    style={{
+                      position: 'absolute',
+                      top: -6,
+                      right: -8,
+                      background: 'var(--danger)',
+                      borderRadius: 'var(--radius-full)',
+                      padding: '1px 5px',
+                      fontSize: '0.65rem',
+                      fontWeight: 800,
+                      color: '#fff',
+                      boxShadow: 'var(--shadow-xs)',
+                    }}
+                  >
+                    {cartCount}
+                  </span>
+                )}
+              </div>
+              <span>Cart</span>
+            </Link>
+
+            <button
+              onClick={toggleTheme}
+              className="nav-item"
+              title={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+              style={{
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                color: 'var(--text-body)',
+                display: 'flex',
+                alignItems: 'center',
+                padding: '6px',
+                borderRadius: 'var(--radius-full)',
+              }}
+            >
+              {isDark ? <Sun size={18} style={{ color: 'var(--accent)' }} /> : <Moon size={18} />}
+            </button>
+
             <div
               className="nav-item"
               onMouseEnter={openDropdown}
@@ -671,54 +719,6 @@ const Header = () => {
                 </div>
               )}
             </div>
-
-            <Link to="/store" className="nav-item" style={{ fontWeight: 600 }}>
-              <Store size={18} />
-              <span>Store</span>
-            </Link>
-
-            <button
-              onClick={toggleTheme}
-              className="nav-item"
-              title={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-              style={{
-                background: 'none',
-                border: 'none',
-                cursor: 'pointer',
-                color: 'var(--text-body)',
-                display: 'flex',
-                alignItems: 'center',
-                padding: '6px',
-                borderRadius: 'var(--radius-full)',
-              }}
-            >
-              {isDark ? <Sun size={18} style={{ color: 'var(--accent)' }} /> : <Moon size={18} />}
-            </button>
-
-            <Link to="/cart" className="nav-item">
-              <div style={{ position: 'relative' }}>
-                <ShoppingCart size={18} />
-                {cartCount > 0 && (
-                  <span
-                    style={{
-                      position: 'absolute',
-                      top: -6,
-                      right: -8,
-                      background: 'var(--danger)',
-                      borderRadius: 'var(--radius-full)',
-                      padding: '1px 5px',
-                      fontSize: '0.65rem',
-                      fontWeight: 800,
-                      color: '#fff',
-                      boxShadow: 'var(--shadow-xs)',
-                    }}
-                  >
-                    {cartCount}
-                  </span>
-                )}
-              </div>
-              <span>Cart</span>
-            </Link>
           </div>
         </div>
       </header>
