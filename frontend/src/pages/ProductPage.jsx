@@ -339,11 +339,11 @@ const ProductPage = () => {
           </div>
         </div>
 
-        <div style={{ background: 'var(--card-bg, #fff)', borderRadius: 6, boxShadow: 'var(--shadow-sm)', padding: '1.75rem 2rem', marginTop: '1rem' }}>
-          <h2 style={{ fontSize: '1.15rem', fontWeight: 700, marginBottom: '1.25rem', color: 'var(--text-main)' }}>Ratings & Reviews</h2>
+        <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', boxShadow: 'var(--shadow-sm)', padding: '1.75rem 2rem', marginTop: '1rem' }}>
+          <h2 style={{ fontSize: '1.15rem', fontWeight: 700, marginBottom: '1.25rem', color: 'var(--text-heading)' }}>Ratings & Reviews</h2>
 
-          <form onSubmit={submitReview} style={{ background: 'var(--bg-light, #f9f9f9)', borderRadius: 8, padding: '1.25rem', marginBottom: '1.5rem', border: '1px solid var(--border-light)' }}>
-            <p style={{ fontSize: '0.85rem', fontWeight: 600, marginBottom: '0.75rem', color: 'var(--text-main)' }}>Write a Review</p>
+          <form onSubmit={submitReview} style={{ background: 'var(--bg-page)', borderRadius: 'var(--radius-md)', padding: '1.25rem', marginBottom: '1.5rem', border: '1px solid var(--border)' }}>
+            <p style={{ fontSize: '0.85rem', fontWeight: 600, marginBottom: '0.75rem', color: 'var(--text-heading)' }}>Write a Review</p>
             <div style={{ marginBottom: '0.75rem' }}>
               <StarRating value={reviewForm.rating} onChange={(rating) => setReviewForm((current) => ({ ...current, rating }))} />
             </div>
@@ -353,7 +353,7 @@ const ProductPage = () => {
               placeholder="Share your experience with this product..."
               required
               rows={3}
-              style={{ width: '100%', padding: '0.7rem', border: '1px solid var(--border-light)', borderRadius: 6, outline: 'none', resize: 'vertical', fontFamily: 'inherit', fontSize: '0.85rem', background: 'var(--input-bg, #fff)', color: 'var(--text-main)' }}
+              style={{ width: '100%', padding: '0.7rem', border: '1px solid var(--border)', borderRadius: 'var(--radius-md)', outline: 'none', resize: 'vertical', fontFamily: 'inherit', fontSize: '0.85rem', background: 'var(--bg-card)', color: 'var(--text-body)' }}
             />
             <button
               type="submit"
@@ -371,13 +371,13 @@ const ProductPage = () => {
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               {reviews.map((review) => (
-                <div key={review._id} style={{ padding: '1rem', borderBottom: '1px solid var(--border-light)' }}>
+                <div key={review._id} style={{ padding: '1rem', borderBottom: '1px solid var(--border)' }}>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.4rem', gap: '1rem', flexWrap: 'wrap' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
                       <span style={{ background: '#388e3c', color: '#fff', fontSize: '0.7rem', fontWeight: 700, padding: '1px 6px', borderRadius: 3, display: 'flex', alignItems: 'center', gap: 2 }}>
                         {review.rating} ★
                       </span>
-                      <span style={{ fontWeight: 600, fontSize: '0.85rem', color: 'var(--text-main)' }}>{review.name}</span>
+                      <span style={{ fontWeight: 600, fontSize: '0.85rem', color: 'var(--text-heading)' }}>{review.name}</span>
                       {review.verifiedPurchase && (
                         <span style={{ fontSize: '0.72rem', fontWeight: 700, color: '#2e7d32', background: '#e8f5e9', padding: '2px 8px', borderRadius: 999 }}>
                           Verified Purchase
