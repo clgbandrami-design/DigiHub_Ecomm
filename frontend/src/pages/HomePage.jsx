@@ -3,7 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import ProductCard from '../components/ProductCard';
 import HeroSlider from '../components/HeroSlider';
 import CategoryBar from '../components/CategoryBar';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Loader } from 'lucide-react';
 import Footer from '../components/Footer';
 import api from '../utils/api';
 
@@ -17,6 +17,11 @@ const SORT_OPTIONS = [
 const HomePage = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(false);
+  const [totalProducts, setTotalProducts] = useState(0);
+
   const [activeCategory, setActiveCategory] = useState('All');
   const [sortBy, setSortBy] = useState('newest');
   const [error, setError] = useState('');
@@ -34,9 +39,16 @@ const HomePage = () => {
 
   const searchQuery = searchParams.get('search') || '';
 
+  // Reset page to 1 when filters change
+  useEffect(() => {
+    setPage(1);
+    setProducts([]);
+  }, [activeCategory, searchQuery, sortBy]);
+
   useEffect(() => {
     const fetchProducts = async () => {
-      setLoading(true);
+      if (page === 1) setLoading(true);
+      else setLoadingMore(true);
       setError('');
 
       try {
@@ -45,20 +57,34 @@ const HomePage = () => {
             category: activeCategory !== 'All' ? activeCategory : undefined,
             sort: sortBy,
             keyword: searchQuery || undefined,
+            page: page,
+            limit: 12,
           },
         });
-        setProducts(Array.isArray(data) ? data : []);
+        
+        // Handle new pagination response format
+        const fetchedProducts = data.products || (Array.isArray(data) ? data : []);
+        
+        if (page === 1) {
+          setProducts(fetchedProducts);
+        } else {
+          setProducts(prev => [...prev, ...fetchedProducts]);
+        }
+        
+        setHasMore(data.page < data.pages);
+        setTotalProducts(data.total || fetchedProducts.length);
       } catch (fetchError) {
         console.error('Error fetching products:', fetchError);
         setError('Could not load products right now. Please try again.');
-        setProducts([]);
+        if (page === 1) setProducts([]);
       } finally {
         setLoading(false);
+        setLoadingMore(false);
       }
     };
 
     fetchProducts();
-  }, [activeCategory, searchQuery, sortBy]);
+  }, [activeCategory, searchQuery, sortBy, page]);
 
   // AI-powered search recommendations
   useEffect(() => {
@@ -128,7 +154,7 @@ const HomePage = () => {
               </h2>
               {!loading && !error && (
                 <p style={{ fontSize: 'var(--fs-xs)', color: 'var(--text-muted)', marginTop: '2px' }}>
-                  {products.length} product{products.length !== 1 ? 's' : ''} found
+                  {totalProducts} product{totalProducts !== 1 ? 's' : ''} found
                 </p>
               )}
             </div>
@@ -268,11 +294,41 @@ const HomePage = () => {
                 </p>
               </div>
             ) : (
-              <div className="product-grid">
-                {products.map((product) => (
-                  <ProductCard key={product._id} product={product} />
-                ))}
-              </div>
+              <>
+                <div className="product-grid">
+                  {products.map((product) => (
+                    <ProductCard key={product._id} product={product} />
+                  ))}
+                </div>
+                
+                {hasMore && (
+                  <div style={{ display: 'flex', justifyContent: 'center', marginTop: '3rem' }}>
+                    <button 
+                      onClick={() => setPage(p => p + 1)} 
+                      disabled={loadingMore}
+                      style={{ 
+                        background: 'var(--bg-page)', 
+                        color: 'var(--text-heading)', 
+                        border: '1px solid var(--border)', 
+                        padding: '0.875rem 2.5rem', 
+                        borderRadius: '999px', 
+                        fontSize: '0.95rem', 
+                        fontWeight: 700, 
+                        cursor: 'pointer',
+                        transition: 'background 0.2s',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.5rem',
+                        boxShadow: 'var(--shadow-sm)'
+                      }}
+                      onMouseEnter={(e) => e.currentTarget.style.background = 'var(--cta-light)'}
+                      onMouseLeave={(e) => e.currentTarget.style.background = 'var(--bg-page)'}
+                    >
+                      {loadingMore ? <><Loader size={16} className="spin" /> Loading...</> : 'Show More Products'}
+                    </button>
+                  </div>
+                )}
+              </>
             )}
           </div>
         </div>

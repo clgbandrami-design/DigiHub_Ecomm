@@ -4,7 +4,7 @@ const Product = require('../models/Product');
 // @route   GET /api/products
 // @access  Public
 const getProducts = async (req, res) => {
-  const { keyword, category, sort, limit } = req.query;
+  const { keyword, category, sort, limit, page } = req.query;
 
   const filter = {};
   if (keyword) {
@@ -24,14 +24,22 @@ const getProducts = async (req, res) => {
   };
   const sortBy = sortMap[sort] || { createdAt: -1 };
 
-  const parsedLimit = Number(limit);
-  const query = Product.find(filter).sort(sortBy);
-  if (Number.isFinite(parsedLimit) && parsedLimit > 0) {
-    query.limit(parsedLimit);
-  }
+  const parsedLimit = Number(limit) || 12;
+  const currentPage = Number(page) || 1;
+  const skip = (currentPage - 1) * parsedLimit;
 
-  const products = await query;
-  res.json(products);
+  const total = await Product.countDocuments(filter);
+  const products = await Product.find(filter)
+    .sort(sortBy)
+    .skip(skip)
+    .limit(parsedLimit);
+
+  res.json({
+    products,
+    page: currentPage,
+    pages: Math.ceil(total / parsedLimit),
+    total,
+  });
 };
 
 // @desc    Fetch single product
