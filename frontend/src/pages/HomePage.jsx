@@ -22,10 +22,10 @@ const HomePage = () => {
   const [hasMore, setHasMore] = useState(false);
   const [totalProducts, setTotalProducts] = useState(0);
 
-  const [activeCategory, setActiveCategory] = useState('All');
+  const [searchParams] = useSearchParams();
+  const [activeCategory, setActiveCategory] = useState(() => searchParams.get('category') || 'All');
   const [sortBy, setSortBy] = useState('newest');
   const [error, setError] = useState('');
-  const [searchParams] = useSearchParams();
   const [aiRecs, setAiRecs] = useState([]);
   const [aiRecsLoading, setAiRecsLoading] = useState(false);
   const [aiMethod, setAiMethod] = useState('');

@@ -18,10 +18,10 @@ const LandingPage = () => {
   ];
 
   const categories = [
-    { icon: <MonitorPlay size={32} />, name: "UI Templates", color: "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)" },
-    { icon: <ImageIcon size={32} />, name: "Graphics", color: "linear-gradient(135deg, #ff0844 0%, #ffb199 100%)" },
-    { icon: <Code size={32} />, name: "Code Kits", color: "linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)" },
-    { icon: <Music size={32} />, name: "Audio Loops", color: "linear-gradient(135deg, #fa709a 0%, #fee140 100%)" },
+    { icon: <MonitorPlay size={32} />, name: "UI Templates", dbCategory: "Templates", color: "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)" },
+    { icon: <ImageIcon size={32} />, name: "Graphics", dbCategory: "Graphics", color: "linear-gradient(135deg, #ff0844 0%, #ffb199 100%)" },
+    { icon: <Code size={32} />, name: "Code Kits", dbCategory: "Code", color: "linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)" },
+    { icon: <Music size={32} />, name: "Audio Loops", dbCategory: "Audio", color: "linear-gradient(135deg, #fa709a 0%, #fee140 100%)" },
   ];
 
   const testimonials = [
@@ -150,7 +150,7 @@ const LandingPage = () => {
             {categories.map((cat, idx) => (
               <div 
                 key={idx} 
-                onClick={() => navigate(`/store?search=${encodeURIComponent(cat.name)}`)}
+                onClick={() => navigate(`/store?category=${encodeURIComponent(cat.dbCategory)}`)}
                 style={{ 
                   background: 'var(--bg-page)', 
                   padding: '2rem', 

@@ -13,7 +13,7 @@ const HeroSlider = () => {
       image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=600',
       cta: 'Explore UI Kits',
       badge: 'Best Sellers',
-      link: '/store?category=UI Kits',
+      link: '/store?category=Templates',
       background: 'linear-gradient(135deg, rgba(82, 143, 240, 0.1) 0%, rgba(82, 143, 240, 0.02) 100%)',
     },
     {
@@ -22,7 +22,7 @@ const HeroSlider = () => {
       image: 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?auto=format&fit=crop&q=80&w=600',
       cta: 'View 3D Assets',
       badge: 'New Arrivals',
-      link: '/store?category=Icons',
+      link: '/store?category=Graphics',
       background: 'linear-gradient(135deg, rgba(233, 30, 99, 0.1) 0%, rgba(233, 30, 99, 0.02) 100%)',
     },
     {
