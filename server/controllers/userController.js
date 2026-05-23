@@ -60,20 +60,23 @@ const registerUser = async (req, res) => {
       });
       return;
     }
-    // Not verified yet — regenerate OTP and resend
+    // Not verified yet — auto verify them now
     userExists.name = name;
     userExists.password = password;
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    userExists.emailOtp = otp;
-    userExists.emailOtpExpires = Date.now() + 10 * 60 * 1000;
+    userExists.isVerified = true;
+    userExists.emailOtp = undefined;
+    userExists.emailOtpExpires = undefined;
     await userExists.save();
-    try {
-      await sendEmailOTP(email, otp);
-      res.status(201).json({ message: 'OTP sent to email', email, pendingVerification: true });
-    } catch (emailError) {
-      res.status(500);
-      throw new Error(`Email Service Error: ${emailError.message}`);
-    }
+    
+    res.status(201).json({
+      _id: userExists._id,
+      name: userExists.name,
+      email: userExists.email,
+      isAdmin: userExists.isAdmin,
+      isVerified: userExists.isVerified,
+      token: generateToken(userExists._id),
+    });
+    return;
   }
 
   // Increment/Create history record
@@ -84,25 +87,23 @@ const registerUser = async (req, res) => {
     await RegistrationHistory.create({ email, count: 1 });
   }
 
-  const otp = Math.floor(100000 + Math.random() * 900000).toString();
   const user = await User.create({
     name,
     email,
     password,
-    isVerified: false,
+    isVerified: true,
     isAdmin: email.toLowerCase() === 'clgbandrami@gmail.com',
-    emailOtp: otp,
-    emailOtpExpires: Date.now() + 10 * 60 * 1000,
   });
 
   if (user) {
-    try {
-      await sendEmailOTP(email, otp);
-      res.status(201).json({ message: 'Registration successful. OTP sent to email', email, pendingVerification: true });
-    } catch (emailError) {
-      res.status(500);
-      throw new Error(`Email Service Error: ${emailError.message}`);
-    }
+    res.status(201).json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      isAdmin: user.isAdmin,
+      isVerified: user.isVerified,
+      token: generateToken(user._id),
+    });
   } else {
     res.status(400).json({ message: 'Invalid user data' });
   }
