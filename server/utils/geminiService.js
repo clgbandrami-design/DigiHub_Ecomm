@@ -13,8 +13,8 @@ const isAvailable = () => {
 
   if (!genAI) {
     genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    embeddingModel = genAI.getGenerativeModel({ model: 'text-embedding-004' });
-    chatModel = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    embeddingModel = genAI.getGenerativeModel({ model: 'gemini-embedding-001' });
+    chatModel = genAI.getGenerativeModel({ model: 'gemini-flash-latest' });
   }
 
   return true;
@@ -70,7 +70,7 @@ const buildEmbeddingText = (product) => {
 };
 
 /**
- * Generate a chat response using Gemini 1.5 Flash.
+ * Generate a chat response using Gemini Flash Latest.
  * @param {string} prompt - The user's input
  * @param {Array} history - Previous conversation messages
  * @param {string} systemInstruction - Instructions for the model

@@ -1,0 +1,5 @@
+[dotenv@17.3.1] injecting env (20) from .env -- tip: ⚙️  specify custom .env file path with { path: '/custom/path/.env' }
+✅ Google OAuth strategy loaded
+Server running in development mode on port 5000
+MongoDB Connected: localhost
+[0mPOST /api/chatbot/chat [32m200[0m 3856.249 ms - 1030[0m
