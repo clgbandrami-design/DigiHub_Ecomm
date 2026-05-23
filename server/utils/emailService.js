@@ -1,3 +1,5 @@
+const axios = require('axios');
+
 const sendEmailOTP = async (email, otp) => {
   if (!process.env.BREVO_API_KEY || !process.env.ADMIN_EMAIL) {
     console.warn('⚠️  BREVO_API_KEY or ADMIN_EMAIL not set in .env. Email delivery will fail.');
@@ -5,17 +7,12 @@ const sendEmailOTP = async (email, otp) => {
   }
 
   try {
-    const response = await fetch('https://api.brevo.com/v3/smtp/email', {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'api-key': process.env.BREVO_API_KEY
-      },
-      body: JSON.stringify({
+    const response = await axios.post(
+      'https://api.brevo.com/v3/smtp/email',
+      {
         sender: { 
           name: 'DigiHub Admin', 
-          email: process.env.ADMIN_EMAIL 
+          email: process.env.ADMIN_EMAIL.trim()
         },
         to: [{ email: email }],
         subject: 'DigiHub - Your Verification OTP',
@@ -32,19 +29,20 @@ const sendEmailOTP = async (email, otp) => {
             <p style="font-size: 12px; color: #999; text-align: center;">DigiHub © 2024 - Premium Digital Assets</p>
           </div>
         `
-      })
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      console.error('❌ Brevo API Error:', errorData);
-      return false;
-    }
+      },
+      {
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'api-key': process.env.BREVO_API_KEY.trim()
+        }
+      }
+    );
 
     console.log(`✅ OTP sent to ${email} via Brevo`);
     return true;
   } catch (error) {
-    console.error('❌ Error sending email:', error);
+    console.error('❌ Error sending email:', error.response ? error.response.data : error.message);
     return false;
   }
 };

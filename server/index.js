@@ -53,5 +53,15 @@ app.use('/api/reviews', require('./routes/reviewRoutes'));
 app.use('/api/payment', require('./routes/paymentRoutes'));
 app.use('/api/pincode', require('./routes/pincodeRoutes'));
 
+// Global error handler
+app.use((err, req, res, next) => {
+  console.error('Unhandled Error:', err);
+  const statusCode = res.statusCode === 200 ? 500 : res.statusCode;
+  res.status(statusCode).json({
+    message: err.message || 'Internal Server Error',
+    stack: process.env.NODE_ENV === 'production' ? null : err.stack,
+  });
+});
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`));
