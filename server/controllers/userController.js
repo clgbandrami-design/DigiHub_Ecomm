@@ -59,6 +59,7 @@ const registerUser = async (req, res) => {
         redirectToLogin: true
       });
       return;
+    }
     // Not verified yet — regenerate OTP and resend
     userExists.name = name;
     userExists.password = password;
@@ -102,6 +103,7 @@ const registerUser = async (req, res) => {
       res.status(500);
       throw new Error(`Email Service Error: ${emailError.message}`);
     }
+  } else {
     res.status(400).json({ message: 'Invalid user data' });
   }
 };
