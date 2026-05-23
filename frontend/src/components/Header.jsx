@@ -206,7 +206,7 @@ const Header = () => {
   };
 
   const scheduleClose = () => {
-    closeTimer.current = window.setTimeout(() => setDropdownOpen(false), 150);
+    closeTimer.current = window.setTimeout(() => setDropdownOpen(false), 350);
   };
 
   const accountLinks = user
