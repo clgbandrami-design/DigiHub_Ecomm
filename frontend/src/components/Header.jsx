@@ -142,12 +142,6 @@ const Header = () => {
     };
   }, []);
 
-  useEffect(() => {
-    if (!permAsked && !locationLabel) {
-      const timer = window.setTimeout(() => setLocPopup(true), 1200);
-      return () => window.clearTimeout(timer);
-    }
-  }, [locationLabel, permAsked]);
 
   useEffect(() => {
     setDropdownOpen(false);
