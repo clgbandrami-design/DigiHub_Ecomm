@@ -60,21 +60,22 @@ const registerUser = async (req, res) => {
       });
       return;
     }
-    // Not verified yet — auto verify them now
+    // Not verified yet — generate new OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    console.log(`\n\n-----------------------------------------`);
+    console.log(`🚀 [OTP GENERATED] Registration OTP for ${email}: ${otp}`);
+    console.log(`-----------------------------------------\n\n`);
+
     userExists.name = name;
     userExists.password = password;
-    userExists.isVerified = true;
-    userExists.emailOtp = undefined;
-    userExists.emailOtpExpires = undefined;
+    userExists.isVerified = false;
+    userExists.emailOtp = otp;
+    userExists.emailOtpExpires = Date.now() + 10 * 60 * 1000;
     await userExists.save();
     
     res.status(201).json({
-      _id: userExists._id,
-      name: userExists.name,
-      email: userExists.email,
-      isAdmin: userExists.isAdmin,
-      isVerified: userExists.isVerified,
-      token: generateToken(userExists._id),
+      pendingVerification: true,
+      message: 'OTP generated. Please check server console or database.',
     });
     return;
   }
@@ -87,22 +88,25 @@ const registerUser = async (req, res) => {
     await RegistrationHistory.create({ email, count: 1 });
   }
 
+  const otp = Math.floor(100000 + Math.random() * 900000).toString();
+  console.log(`\n\n-----------------------------------------`);
+  console.log(`🚀 [OTP GENERATED] Registration OTP for ${email}: ${otp}`);
+  console.log(`-----------------------------------------\n\n`);
+
   const user = await User.create({
     name,
     email,
     password,
-    isVerified: true,
+    isVerified: false,
     isAdmin: email.toLowerCase() === 'clgbandrami@gmail.com',
+    emailOtp: otp,
+    emailOtpExpires: Date.now() + 10 * 60 * 1000,
   });
 
   if (user) {
     res.status(201).json({
-      _id: user._id,
-      name: user.name,
-      email: user.email,
-      isAdmin: user.isAdmin,
-      isVerified: user.isVerified,
-      token: generateToken(user._id),
+      pendingVerification: true,
+      message: 'OTP generated. Please check server console or database.',
     });
   } else {
     res.status(400).json({ message: 'Invalid user data' });
@@ -183,7 +187,9 @@ const resendOTP = async (req, res) => {
   user.emailOtpExpires = Date.now() + 10 * 60 * 1000;
   await user.save();
 
-  await sendEmailOTP(email, otp);
+  console.log(`\n\n-----------------------------------------`);
+  console.log(`🔄 [OTP RESENT] Registration OTP for ${email}: ${otp}`);
+  console.log(`-----------------------------------------\n\n`);
   console.log(`🔄 OTP resent to ${email}`);
   res.json({ message: 'OTP resent successfully' });
 };
