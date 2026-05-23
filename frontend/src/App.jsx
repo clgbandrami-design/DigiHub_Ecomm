@@ -18,6 +18,7 @@ import BecomeSellerPage from './pages/BecomeSellerPage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
 import VerifyOTPPage from './pages/VerifyOTPPage';
 import OrdersPage from './pages/OrdersPage';
+import Chatbot from './components/Chatbot';
 import {
   AboutPage,
   CareersPage,
@@ -78,6 +79,7 @@ function AppInner() {
           <Route path="/policy/privacy" element={<PrivacyPage />} />
         </Routes>
       </main>
+      <Chatbot />
     </div>
   );
 }

@@ -2,6 +2,7 @@ const { GoogleGenerativeAI } = require('@google/generative-ai');
 
 let genAI = null;
 let embeddingModel = null;
+let chatModel = null;
 
 /**
  * Initialize the Gemini client lazily.
@@ -12,7 +13,8 @@ const isAvailable = () => {
 
   if (!genAI) {
     genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    embeddingModel = genAI.getGenerativeModel({ model: 'gemini-embedding-001' });
+    embeddingModel = genAI.getGenerativeModel({ model: 'text-embedding-004' });
+    chatModel = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
   }
 
   return true;
@@ -67,9 +69,42 @@ const buildEmbeddingText = (product) => {
   return `${product.category}: ${product.name}. ${product.description}`;
 };
 
+/**
+ * Generate a chat response using Gemini 1.5 Flash.
+ * @param {string} prompt - The user's input
+ * @param {Array} history - Previous conversation messages
+ * @param {string} systemInstruction - Instructions for the model
+ * @returns {Promise<string>}
+ */
+const generateChatResponse = async (prompt, history = [], systemInstruction = '') => {
+  if (!isAvailable()) {
+    throw new Error('GEMINI_API_KEY is not set.');
+  }
+
+  // Format history for Gemini API
+  const formattedHistory = history.map((msg) => ({
+    role: msg.role === 'user' ? 'user' : 'model',
+    parts: [{ text: msg.content }],
+  }));
+
+  // Create a chat session with system instructions injected into the context
+  const chat = chatModel.startChat({
+    history: [
+      { role: 'user', parts: [{ text: `System Instruction: ${systemInstruction}. Acknowledge.` }] },
+      { role: 'model', parts: [{ text: 'Understood.' }] },
+      ...formattedHistory,
+    ],
+  });
+
+  const result = await chat.sendMessage(prompt);
+  const response = await result.response;
+  return response.text();
+};
+
 module.exports = {
   isAvailable,
   generateEmbedding,
   cosineSimilarity,
   buildEmbeddingText,
+  generateChatResponse,
 };
