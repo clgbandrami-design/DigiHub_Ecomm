@@ -59,7 +59,6 @@ const registerUser = async (req, res) => {
         redirectToLogin: true
       });
       return;
-    }
     // Not verified yet — regenerate OTP and resend
     userExists.name = name;
     userExists.password = password;
@@ -67,13 +66,13 @@ const registerUser = async (req, res) => {
     userExists.emailOtp = otp;
     userExists.emailOtpExpires = Date.now() + 10 * 60 * 1000;
     await userExists.save();
-    const emailSent = await sendEmailOTP(email, otp);
-    if (!emailSent) {
+    try {
+      await sendEmailOTP(email, otp);
+      res.status(201).json({ message: 'OTP sent to email', email, pendingVerification: true });
+    } catch (emailError) {
       res.status(500);
-      throw new Error('Failed to send verification email. Please ensure the email service is configured correctly.');
+      throw new Error(`Email Service Error: ${emailError.message}`);
     }
-    res.status(201).json({ message: 'OTP sent to email', email, pendingVerification: true });
-    return;
   }
 
   // Increment/Create history record
@@ -96,13 +95,13 @@ const registerUser = async (req, res) => {
   });
 
   if (user) {
-    const emailSent = await sendEmailOTP(email, otp);
-    if (!emailSent) {
+    try {
+      await sendEmailOTP(email, otp);
+      res.status(201).json({ message: 'Registration successful. OTP sent to email', email, pendingVerification: true });
+    } catch (emailError) {
       res.status(500);
-      throw new Error('Failed to send verification email. Please ensure the email service is configured correctly.');
+      throw new Error(`Email Service Error: ${emailError.message}`);
     }
-    res.status(201).json({ message: 'Registration successful. OTP sent to email', email, pendingVerification: true });
-  } else {
     res.status(400).json({ message: 'Invalid user data' });
   }
 };

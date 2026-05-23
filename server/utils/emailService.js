@@ -42,8 +42,9 @@ const sendEmailOTP = async (email, otp) => {
     console.log(`✅ OTP sent to ${email} via Brevo`);
     return true;
   } catch (error) {
-    console.error('❌ Error sending email:', error.response ? error.response.data : error.message);
-    return false;
+    const errorMsg = error.response ? JSON.stringify(error.response.data) : error.message;
+    console.error('❌ Error sending email:', errorMsg);
+    throw new Error(errorMsg);
   }
 };
 
