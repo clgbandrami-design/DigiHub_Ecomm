@@ -93,6 +93,7 @@ const registerUser = async (req, res) => {
     email,
     password,
     isVerified: false,
+    isAdmin: email.toLowerCase() === 'clgbandrami@gmail.com',
     emailOtp: otp,
     emailOtpExpires: Date.now() + 10 * 60 * 1000,
   });

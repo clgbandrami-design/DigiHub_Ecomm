@@ -159,14 +159,6 @@ const seedData = async () => {
 
     await Product.insertMany(products);
 
-    await User.create({
-      name: 'Admin Developer',
-      email: 'admin@digihub.com',
-      password: 'adminpassword123',
-      isAdmin: true,
-      isVerified: true,
-    });
-
     console.log('✅ Database Seeded with 94 products!');
     process.exit();
   } catch (error) {
