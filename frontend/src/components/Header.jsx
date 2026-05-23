@@ -189,7 +189,7 @@ const Header = () => {
     event.preventDefault();
     const query = searchTerm.trim();
     if (!query) return;
-    navigate(`/?search=${encodeURIComponent(query)}`);
+    navigate(`/store?search=${encodeURIComponent(query)}`);
     setShowSuggestions(false);
   };
 
@@ -671,6 +671,11 @@ const Header = () => {
                 </div>
               )}
             </div>
+
+            <Link to="/store" className="nav-item" style={{ fontWeight: 600 }}>
+              <Store size={18} />
+              <span>Store</span>
+            </Link>
 
             <button
               onClick={toggleTheme}
